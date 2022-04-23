@@ -76,7 +76,7 @@ Strategy.prototype.authenticate = function(req) {
 Strategy.prototype.redirectToAuthenticate = function (req) {
   var params = querystring.stringify({
     ver: 3,
-    url: this._opts.audience + req.url,
+    url: this._opts.audience,
     desc: this._opts.desc,
     msg: this._opts.msg,
     iact: this._opts.iact === true ? 'yes' : this._opts.iact === false ? 'no' : null
