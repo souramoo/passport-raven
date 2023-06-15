@@ -10,6 +10,7 @@ var passport = require('passport');
 
 var RAVEN_URL_DEBUG = 'https://demo.raven.cam.ac.uk/auth/authenticate.html';
 var RAVEN_URL_PRODUCTION = 'https://raven.cam.ac.uk/auth/authenticate.html';
+var LEGACY_RAVEN_URL_PRODUCTION = 'https://legacy.raven.cam.ac.uk/auth/authenticate.html';
 
 var KEYS = {
   production: fs.readFileSync(__dirname + '/pubkey2.crt'),
@@ -81,7 +82,7 @@ Strategy.prototype.redirectToAuthenticate = function (req) {
     msg: this._opts.msg,
     iact: this._opts.iact === true ? 'yes' : this._opts.iact === false ? 'no' : null
   });
-  this.redirect((this.debug ? RAVEN_URL_DEBUG : RAVEN_URL_PRODUCTION) + '?' + params);
+  this.redirect((this.debug ? RAVEN_URL_DEBUG : (this._opts.legacy ? LEGACY_RAVEN_URL_PRODUCTION : RAVEN_URL_PRODUCTION)) + '?' + params);
 };
 
 Strategy.prototype.processResponse = function (req) {
