@@ -50,7 +50,7 @@ exports.Strategy = Strategy;
 function Strategy(options, verify) {
   if (typeof options.audience !== 'string') throw new Error('You must provide an audience option.');
   if (typeof verify !== 'function') throw new Error('You must provide a verify function.');
-  this.name = 'raven';
+  this.name = 'raven' + (options.tag ? options.tag : "");
   this._verify = verify;
   this._opts = options;
 
