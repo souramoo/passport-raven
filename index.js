@@ -5,7 +5,7 @@ var querystring = require('querystring');
 var util = require('util');
 var crypto = require('crypto');
 var fs = require('fs');
-var debug = require('debug')('raven');
+var debug = require('debug')('wls');
 var passport = require('passport');
 
 var RAVEN_URL_DEBUG = 'https://demo.raven.cam.ac.uk/auth/authenticate.html';
@@ -49,7 +49,7 @@ exports.Strategy = Strategy;
 function Strategy(options, verify) {
   if (typeof options.audience !== 'string') throw new Error('You must provide an audience option.');
   if (typeof verify !== 'function') throw new Error('You must provide a verify function.');
-  this.name = 'raven';
+  this.name = 'wls';
   this._verify = verify;
   this._opts = options;
 
@@ -104,8 +104,8 @@ Strategy.prototype.processResponse = function (req) {
       //data = parameters - (sig + kid)
       var data = req.query['WLS-Response'].split('!').slice(0, -2).join('!');
       assert(response.kid === '2' || response.kid === '901');
-      if (checkSignature(data, response.sig, this.debug ? KEYS.debug : KEYS.production)) {
-        debug('Raven response signature check passed.');
+      if (checkSignature(data, response.sig, this.key)) {
+        debug('WLS response signature check passed.');
         response.isCurrent = response.ptags === 'current';
         if (self._opts['passReqToCallback']) {
           return self._verify(req, response.principal, response, function (err, user, info) {
@@ -121,8 +121,8 @@ Strategy.prototype.processResponse = function (req) {
           });
         }
       } else {
-        debug('Raven response signature check failed.');
-        return this.error(new Error('Raven response signature check failed.'));
+        debug('WLS response signature check failed.');
+        return this.error(new Error('WLS response signature check failed.'));
       }
     } else {
         debug('Timestamp out of date.');

@@ -1,7 +1,7 @@
 {
-  "name": "passport-raven",
+  "name": "passport-wls",
   "version": "2.0.0",
-  "description": "Raven (University of Cambridge) authentication module for passport",
+  "description": "Web Login Service (WLS) / Ucam-WebAuth authentication module for passport",
   "main": "index.js",
   "directories": {
     "test": "test"
@@ -11,9 +11,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ForbesLindesay/passport-raven.git"
+    "url": "https://github.com/SRCF/passport-wls.git"
   },
   "author": "ForbesLindesay",
+  "contributors": [
+    "SRCF <sysadmins@srcf.net>"
+  ],
   "license": "MIT",
   "readmeFilename": "README.md",
   "gitHead": "90838415a7b4dfe4b2b5ddad467589b227fcaf06",
