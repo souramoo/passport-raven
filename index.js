@@ -8,14 +8,6 @@ var fs = require('fs');
 var debug = require('debug')('wls');
 var passport = require('passport');
 
-var RAVEN_URL_DEBUG = 'https://demo.raven.cam.ac.uk/auth/authenticate.html';
-var RAVEN_URL_PRODUCTION = 'https://raven.cam.ac.uk/auth/authenticate.html';
-
-var KEYS = {
-  production: fs.readFileSync(__dirname + '/pubkey2.crt'),
-  debug: fs.readFileSync(__dirname + '/pubkey901.crt')
-};
-
 var RESPONSE_PARTS = [
   'ver',
   'status',
@@ -49,13 +41,17 @@ exports.Strategy = Strategy;
 function Strategy(options, verify) {
   if (typeof options.audience !== 'string') throw new Error('You must provide an audience option.');
   if (typeof verify !== 'function') throw new Error('You must provide a verify function.');
-  this.name = 'wls';
+  this.name = options.name ? 'wls-' + options.name : 'wls';
   this._verify = verify;
   this._opts = options;
 
   this.clockOffset = options.clockOffset || 0;
   this.clockMargin = options.clockMargin || 60000;
-  this.debug = options.debug || false;
+
+  this.authUri = options.authUri || 'https://raven.cam.ac.uk/auth/authenticate.html';
+  this.keyId = options.keyId || '2';
+  var keyPath = options.keyPath || __dirname + '/pubkey2.crt';
+  this.key = fs.readFileSync(keyPath);
 }
 util.inherits(Strategy, passport.Strategy);
 
@@ -81,7 +77,7 @@ Strategy.prototype.redirectToAuthenticate = function (req) {
     msg: this._opts.msg,
     iact: this._opts.iact === true ? 'yes' : this._opts.iact === false ? 'no' : null
   });
-  this.redirect((this.debug ? RAVEN_URL_DEBUG : RAVEN_URL_PRODUCTION) + '?' + params);
+  this.redirect(this.authUri + '?' + params);
 };
 
 Strategy.prototype.processResponse = function (req) {
@@ -103,7 +99,10 @@ Strategy.prototype.processResponse = function (req) {
       debug('Checking certificate.');
       //data = parameters - (sig + kid)
       var data = req.query['WLS-Response'].split('!').slice(0, -2).join('!');
-      assert(response.kid === '2' || response.kid === '901');
+      if (response.kid !== this.keyId) {
+        debug('WLS response using unknown key ' + response.kid + ', expecting ' + this.keyId);
+        return this.error(new Error('WLS response using unknown key ' + response.kid + ', expecting ' + this.keyId));
+      }
       if (checkSignature(data, response.sig, this.key)) {
         debug('WLS response signature check passed.');
         response.isCurrent = response.ptags === 'current';
