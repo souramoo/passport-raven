@@ -3,6 +3,7 @@
   "version": "2.0.0",
   "description": "Web Login Service (WLS) / Ucam-WebAuth authentication module for passport",
   "main": "index.js",
+  "types": "types/index.d.ts",
   "directories": {
     "test": "test"
   },
