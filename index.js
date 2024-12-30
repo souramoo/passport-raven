@@ -80,9 +80,9 @@ Strategy.prototype.redirectToAuthenticate = function (req) {
   var params = querystring.stringify({
     ver: 3,
     url:
-      this._opts.audience + req.url + prefix
-        ? "&host=" + encodeURIComponent(prefix)
-        : "", //host=prefix,
+      this._opts.audience +
+      req.url +
+      (prefix ? "&host=" + encodeURIComponent(prefix) : ""),
     desc: this._opts.desc,
     msg: this._opts.msg,
     iact:
