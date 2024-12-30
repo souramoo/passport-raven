@@ -64,22 +64,25 @@ util.inherits(Strategy, passport.Strategy);
  * @param {Object} req
  * @api protected
  */
-Strategy.prototype.authenticate = function (req, res) {
+Strategy.prototype.authenticate = function (req) {
   if (req.query["WLS-Response"]) {
     return this.processResponse(req);
   } else {
-    return this.redirectToAuthenticate(req, res);
+    return this.redirectToAuthenticate(req);
   }
 };
 
-Strategy.prototype.redirectToAuthenticate = function (req, res) {
+Strategy.prototype.redirectToAuthenticate = function (req) {
   let prefix = "";
-  if (res.locals.mappedHost) {
-    prefix = res.locals.mappedHost;
+  if (req.mappedHost) {
+    prefix = req.mappedHost;
   }
   var params = querystring.stringify({
     ver: 3,
-    url: this._opts.audience + req.url + "&host=" + encodeURIComponent(prefix), //host=prefix,
+    url:
+      this._opts.audience + req.url + prefix
+        ? "&host=" + encodeURIComponent(prefix)
+        : "", //host=prefix,
     desc: this._opts.desc,
     msg: this._opts.msg,
     iact:
