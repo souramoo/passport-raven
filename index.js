@@ -82,7 +82,7 @@ Strategy.prototype.redirectToAuthenticate = function (req) {
     url:
       this._opts.audience +
       req.url +
-      (prefix ? "&host=" + encodeURIComponent(prefix) : ""),
+      (prefix ? "?host=" + encodeURIComponent(prefix) : ""),
     desc: this._opts.desc,
     msg: this._opts.msg,
     iact:
