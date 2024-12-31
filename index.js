@@ -74,8 +74,8 @@ Strategy.prototype.authenticate = function (req) {
 
 Strategy.prototype.redirectToAuthenticate = function (req) {
   let prefix = "";
-  if (req.mappedHost) {
-    prefix = req.mappedHost;
+  if (req.redirectHost) {
+    prefix = req.redirectHost;
   }
   var params = querystring.stringify({
     ver: 3,
